@@ -17,6 +17,7 @@ const getProductsById = async (req, res) => {
 const postProduct = async (req, res) => {
   const { name } = req.body;
   const product = await productsService.postProduct(name);
+  if (product.type) return res.status(422).json(product.message);
   return res.status(201).json(product.message);
 };
 
