@@ -1,25 +1,22 @@
-const productsModel = require('../models/products.model');
 const salesModel = require('../models/sales.model');
+const validateSale = require('./validations/validateSale');
 
-const getProducts = async (product) => {
-  const products = await productsModel.getProducts();
-  const selectSoldProducts = await product.every(
-    (soldProduct) => products.find((item) => item.id === soldProduct.productId),
-  );
-  if (!selectSoldProducts) return false;
-  return true;
-};
+const saveSale = async (sale) => {
+  const error = await validateSale.validateTheSale(sale);
+  if (error.type) return error;
 
-const postSaleByProduct = async (product) => {
-  const getProduct = await getProducts(product);
-  if (!getProduct) return { type: 'NOT_FOUND', message: 'Product not found' };
-  const creatSale = await salesModel.postSale();
+  const idSale = await salesModel.postSale();
   await Promise.all(
-    product.map((sale) => product.postSaleByProduct({ ...sale, creatSale })),
+    sale.map(async ({ productId, quantity }) =>
+      salesModel.postSaleByProduct(idSale, productId, quantity)),
   );
-  return { type: null, message: { id: creatSale, itemSold: product } };
+
+  return {
+    type: null,
+    message: { id: idSale, itemsSold: sale },
+  };
 };
 
 module.exports = {
-  postSaleByProduct,
+  saveSale,
 };
