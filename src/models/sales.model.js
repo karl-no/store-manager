@@ -14,7 +14,33 @@ const postSaleByProduct = async (saleId, productId, quantity) => {
   );
 };
 
+const selectAllSales = async () => {
+  const [result] = await connection.execute(
+    `SELECT s_pro.sale_id AS saleId, s_pro.product_id AS productId, s_pro.quantity, s.date
+    FROM StoreManager.sales_products AS s_pro
+    INNER JOIN StoreManager.sales AS s
+    ON s_pro.sale_id = s.id
+    ORDER BY saleId, productID;`,
+  );
+  return result;
+};
+
+const selectSaleById = async (id) => {
+  const [result] = await connection.execute(
+    `SELECT s_pro.product_id AS productId, s_pro.quantity, s.date
+    FROM StoreManager.sales_products AS s_pro
+    INNER JOIN StoreManager.sales AS s
+    ON s_pro.sale_id = s.id
+    AND s.id = ?
+    ORDER BY s.id, productID;`,
+    [id],
+  );
+  return result;
+};
+
 module.exports = {
   postSale,
   postSaleByProduct,
+  selectAllSales,
+  selectSaleById,
 };

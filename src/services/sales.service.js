@@ -17,6 +17,25 @@ const saveSale = async (sale) => {
   };
 };
 
+const selectAllSales = async () => {
+  const result = await salesModel.selectAllSales();
+  return { type: null, message: result };
+};
+
+const checkIdSales = async (id) => {
+  const checkSalesId = await salesModel.selectSaleById(id);
+  if (!checkSalesId.length) return undefined;
+  return checkSalesId;
+};
+
+const selectSaleById = async (id) => {
+  const checkSale = await checkIdSales(id);
+  if (!checkSale) return { type: 'NOT_FOUND', message: 'Sale not found' };
+  return { type: null, message: checkSale };
+};
+
 module.exports = {
   saveSale,
+  selectAllSales,
+  selectSaleById,
 };
