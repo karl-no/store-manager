@@ -9,7 +9,12 @@ const checkSale = joi.object({
   quantity: joi.number().integer().min(1).required(),
 });
 
+const checkProduct = joi.object({
+  id: joi.number().integer().min(1).required(),
+});
+
 module.exports = {
   checkName,
   checkSale,
+  checkProduct,
 };
